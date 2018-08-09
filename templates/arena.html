@@ -1,0 +1,85 @@
+<!-- {% extends 'base.html' %} -->
+
+{% block title %}Arena{% endblock %}
+
+{% block content %}
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.js" type="text/javascript"></script>
+{% if user.is_authenticated %}
+  Hi {{ user.username }}!
+  <p><a href="{% url 'logout' %}">logout</a></p>
+{% else %}
+  <p>You are not logged in</p>
+  <a href="{% url 'login' %}">login</a>
+{% endif %}
+
+<p>MQTT read:
+<input type="text" name="bbb" id="bbb" />
+</p>
+
+<p>MQTT send:
+<input type="text" name="send" id="send" />
+</p>
+<button type="button" onclick="foo()">Click Me!</button>
+
+<script type"text/javascript" language="javascript">
+  var msg = "k";
+  var mqtt;
+  var reconnectTimeout=2000;
+  var host= "{{mqtthost}}";
+  var port = {{mqttport}};//32285;
+
+  mqtt = new Paho.MQTT.Client(host, port, "clientjs");
+
+  mqtt.onConnectionLost = onConnectionLost;
+  mqtt.onMessageArrived = onMessageArrived;
+
+  console.log("connecting to " + host + " "+ port);
+
+  var options = {
+    useSSL: true,
+        userName: "{{mqttuser}}",
+        password: "{{mqttpass}}",
+    timeout: 3,
+    onSuccess: onConnect,//callback function
+    onFailure:doFail
+  };
+
+  mqtt.connect(options);//Connect
+
+  function onConnect(){
+  //Once a connection has been made, make a subscription and send a message
+  console.log("Connected");
+  mqtt.subscribe("/test");//subscribe to topic
+  //var data = JSON.stringify({X: 0, Y: 6});
+  message = new Paho.MQTT.Message(msg);
+  message.destinationName="/test"; //Publish topic = /test
+  mqtt.send(message); //publish message
+  //setInterval(function(){onConnect();}, 500);
+  }
+
+  function doFail(e){
+    console.log(e);
+  }
+
+  // called when the client loses its connection
+  function onConnectionLost(responseObject) {
+    if (responseObject.errorCode !== 0) {
+      console.log("onConnectionLost:"+responseObject.errorMessage);
+    }
+  }
+
+  // called when a message arrives
+  function onMessageArrived(message) {
+    console.log("onMessageArrived:"+message.payloadString);
+    document.getElementById('bbb').value = message.payloadString;
+  }
+
+  function foo(){
+    msg = document.getElementById('send').value;
+    onConnect();
+  }
+</script>
+
+
+{% endblock %}
