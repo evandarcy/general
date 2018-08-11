@@ -3,8 +3,11 @@
 User logins:
 
 evan - robotify (admin, robot1)
+
 test1 - robotify (robot1)
+
 test2 - robotify (no robot)
+
 
 #1 Log in as evan
 
