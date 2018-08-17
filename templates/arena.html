@@ -95,40 +95,45 @@
 
   function check(message){
     var myObj, i;
-    myObj = JSON.parse(message.payloadString);
+    try{
+        myObj = JSON.parse(message.payloadString);
 
-    //{"initialise": "robot1", "health": 10}
-    //{"initialise":"robot1"}
-    //NOT {"health: 10"}
-    console.log("******************");
-    //initialises robots in match
-    if(myObj.initialise){
-        if( robots.includes(myObj.initialise) ){
-          console.log("Robot already initialised");
-        }
-        else{
-          console.log("Robot not yet initialised. Adding.");
-          robots[robots.length] = myObj.initialise;
-        }
-        //Sends health of robots
-        if(myObj.health){
-            if(myObj.initialise == "{{mqttuser}}"){
-              yourhealth = myObj.health;
+        //{"initialise": "robot1", "health": 10}
+        //{"initialise":"robot1"}
+        //NOT {"health: 10"}
+        console.log("******************");
+        //initialises robots in match
+        if(myObj.initialise){
+            if( robots.includes(myObj.initialise) ){
+              console.log("Robot already initialised");
             }
             else{
-              opponenthealth = myObj.health;
+              console.log("Robot not yet initialised. Adding.");
+              robots[robots.length] = myObj.initialise;
             }
-        }
-      console.log("Initialised robots= "+robots.toString());
-      console.log("Your robot is : "+"{{mqttuser}}");
-      console.log("Your health = "+yourhealth);
-      console.log("Your opponent health = "+opponenthealth);
-      console.log("******************")
-    }
+            //Sends health of robots
+            if(myObj.health){
+                if(myObj.initialise == "{{mqttuser}}"){
+                  yourhealth = myObj.health;
+                }
+                else{
+                  opponenthealth = myObj.health;
 
-    else{
-      console.log("Not recognised");
-      console.log("******************")
+                }
+            }
+          console.log("Initialised robots= "+robots.toString());
+          console.log("Your robot is : "+"{{mqttuser}}");
+          console.log("Your health = "+yourhealth);
+          console.log("Your opponent health = "+opponenthealth);
+          console.log("******************")
+        }
+        else{
+          console.log("Not recognised");
+          console.log("******************")
+        }
+    }
+    catch(e){
+      console.log("Invalid Input");
     }
 
   }
