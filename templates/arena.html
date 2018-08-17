@@ -36,40 +36,46 @@
   var host= "{{mqtthost}}";
   var port = {{mqttport}};//32285;
 
-  //mqtt = new Paho.MQTT.Client("m21.cloudmqtt.com", 32285, "web_" + parseInt(Math.random() * 100, 10));
-  mqtt = new Paho.MQTT.Client(host, port, "{{mqttuser}}");
-
-  mqtt.onConnectionLost = onConnectionLost;
-  mqtt.onMessageArrived = onMessageArrived;
-  console.log("{{UUID}}");
   console.log("connecting to " + host + " "+ port);
+  setTimeout(function(){ connectclient(); }, 500);
 
-  var options = {
-    useSSL: true,
-        userName: "{{mqttuser}}",
-        password: "{{mqttpass}}",
-    timeout: 3,
-    onSuccess: onConnect,//callback function
-    onFailure: doFail
-  };
+  function connectclient(){
+    mqtt = new Paho.MQTT.Client(host, port, "{{mqttuser}}");
 
-   // mqtt.connect(options);//Connect
- setTimeout(function(){ mqtt.connect(options); }, 20000);
+    mqtt.onConnectionLost = onConnectionLost;
+    mqtt.onMessageArrived = onMessageArrived;
 
+    var options = {
+      useSSL: true,
+          userName: "{{mqttuser}}",
+          password: "{{mqttpass}}",
+      timeout: 3,
+      onSuccess: onConnect,//callback function
+      onFailure: doFail
+    };
+    mqtt.connect(options);
+  }
+
+  //Called upon successful connection to broker
   function onConnect(){
   //Once a connection has been made, make a subscription and send a message
   console.log("Connected");
-  //mqtt.subscribe("users/robots/{{mqttuser}}");//subscribe to topic
   mqtt.subscribe("robots/health");//subscribe to topic
-  //var data = JSON.stringify({X: 0, Y: 6});
   message = new Paho.MQTT.Message(msg);
-//  message.destinationName="users/robots/{{mqttuser}}"; //Publish topic = /test
   message.destinationName="{{mqttuser}}"; //Publish topic = /test
   mqtt.send(message); //publish message
   }
 
   function doFail(e){
-    console.log(e);
+    //console.log(e);
+    if(e.errorCode == 6){
+      console.log("Awaiting password change procedure...")
+    }
+
+    else{
+      console.log(e);
+    }
+    setTimeout(function(){ connectclient(); }, 500);
 
   }
 
@@ -82,7 +88,6 @@
 
   // called when a message arrives
   function onMessageArrived(message) {
-
     console.log("onMessageArrived:"+message.payloadString);
     document.getElementById('bbb').value = message.payloadString;
     check(message);
