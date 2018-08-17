@@ -7,8 +7,8 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.js" type="text/javascript"></script>
 
 {% if user.is_authenticated and user_has_robot == True %}
-  Hi {{ user.username }}!
-  <p><a href="{% url 'logout' %}">logout</a></p>
+  <!-- Hi {{ user.username }}! -->
+
 
 {% else %}
 <p>You are not authorized to access the arena.</p>
@@ -17,6 +17,23 @@
 {}
 {% endif %}
 
+<div class="fixed-top">
+<div class="container-fluid" style="height:0px; padding-left:200px;">
+  <div class="progress" style="height:10px; margin-bottom: 2px">
+    <div class="progress-bar" id="yourhealth" style="width:100%; height:10px">
+      Your health
+    </div>
+  </div>
+  <div class="progress" style="height:10px">
+    <div class="progress-bar bg-danger" id="opponenthealth" style="width:100%; height:10px">
+      Opponent health
+    </div>
+  </div>
+</div>
+</div>
+<p><a href="{% url 'logout' %}">logout</a></p>
+Hi {{ user.username }}!
+<div style="margin-top: 50px">
 <p>MQTT read:
 <input type="text" name="bbb" id="bbb" />
 </p>
@@ -25,6 +42,7 @@
 <input type="text" name="send" id="send" />
 </p>
 <button type="button" onclick="foo()">Click Me!</button>
+</div>
 
 <script type"text/javascript" language="javascript">
   var robots = [];
@@ -32,13 +50,13 @@
   var opponenthealth;
   var msg = "k";
   var mqtt;
-  var reconnectTimeout=2000;
   var host= "{{mqtthost}}";
   var port = {{mqttport}};//32285;
 
   console.log("connecting to " + host + " "+ port);
-  setTimeout(function(){ connectclient(); }, 500);
+  setTimeout(function(){ connectclient(); }, 1000);
 
+  //Connect to broker function
   function connectclient(){
     mqtt = new Paho.MQTT.Client(host, port, "{{mqttuser}}");
 
@@ -75,7 +93,7 @@
     else{
       console.log(e);
     }
-    setTimeout(function(){ connectclient(); }, 500);
+    setTimeout(function(){ connectclient(); }, 1000);
 
   }
 
@@ -98,6 +116,7 @@
     onConnect();
   }
 
+  //Check message received from robot for JSON data
   function check(message){
     var myObj, i;
     try{
@@ -112,18 +131,23 @@
             if( robots.includes(myObj.initialise) ){
               console.log("Robot already initialised");
             }
-            else{
+            if( robots.length< 2 && robots.includes(myObj.initialise) == false){
               console.log("Robot not yet initialised. Adding.");
               robots[robots.length] = myObj.initialise;
+            }
+
+            else{
+              console.log("Two robots already initialised.")
             }
             //Sends health of robots
             if(myObj.health){
                 if(myObj.initialise == "{{mqttuser}}"){
                   yourhealth = myObj.health;
+                  document.getElementById("yourhealth").style.width = yourhealth+"%";
                 }
                 else{
                   opponenthealth = myObj.health;
-
+                  document.getElementById("opponenthealth").style.width = opponenthealth+"%";
                 }
             }
           console.log("Initialised robots= "+robots.toString());

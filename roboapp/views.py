@@ -45,6 +45,7 @@ def arena(request):
             # Update password of mqtt user in Django database with unique key
             # Then update password in cloudmqtt
             mqttpass = unique_key #set mqttpass equal to unique key
+            robotobject.mqttpass = mqttpass
             robotobject.save() #save update to db
 
             url = "https://api.cloudmqtt.com/api/user/"+str(mqttuser) #cloudmqtt api update password, pass username in url
