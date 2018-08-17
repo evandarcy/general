@@ -33,7 +33,7 @@
   var port = {{mqttport}};//32285;
 
   //mqtt = new Paho.MQTT.Client("m21.cloudmqtt.com", 32285, "web_" + parseInt(Math.random() * 100, 10));
-  mqtt = new Paho.MQTT.Client(host, port, "clientjs");
+  mqtt = new Paho.MQTT.Client(host, port, "{{mqttuser}}");
 
   mqtt.onConnectionLost = onConnectionLost;
   mqtt.onMessageArrived = onMessageArrived;
@@ -54,12 +54,13 @@
   function onConnect(){
   //Once a connection has been made, make a subscription and send a message
   console.log("Connected");
-  mqtt.subscribe("users/robots/{{mqttuser}}");//subscribe to topic
+  //mqtt.subscribe("users/robots/{{mqttuser}}");//subscribe to topic
+  mqtt.subscribe("{{mqttuser}}");//subscribe to topic
   //var data = JSON.stringify({X: 0, Y: 6});
   message = new Paho.MQTT.Message(msg);
-  message.destinationName="users/robots/{{mqttuser}}"; //Publish topic = /test
+//  message.destinationName="users/robots/{{mqttuser}}"; //Publish topic = /test
+message.destinationName="{{mqttuser}}"; //Publish topic = /test
   mqtt.send(message); //publish message
-  //setInterval(function(){onConnect();}, 500);
   }
 
   function doFail(e){
@@ -75,6 +76,7 @@
 
   // called when a message arrives
   function onMessageArrived(message) {
+    check(message);
     console.log("onMessageArrived:"+message.payloadString);
     document.getElementById('bbb').value = message.payloadString;
   }
@@ -82,6 +84,16 @@
   function foo(){
     msg = document.getElementById('send').value;
     onConnect();
+  }
+
+  function check(message){
+    if(message.payloadString == "hit"){
+      console.log("Hit!");
+    }
+
+    else{
+      console.log("Miss");
+    }
   }
 </script>
 

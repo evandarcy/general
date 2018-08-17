@@ -23,6 +23,7 @@ def arena(request):
     # Create list of robots
     robot_list = robot.objects.filter()
     for i in robot_list:
+        #If user linked to robot is same as user attempting access
         if i.user == user:
             print("\nRobot found for:",user,"; robot = ",i.robotname,"\n")
             # Append userrobot to correct robot
@@ -43,7 +44,6 @@ def arena(request):
             ###################
             # Update password of mqtt user in Django database with unique key
             # Then update password in cloudmqtt
-            ###################
             mqttpass = unique_key #set mqttpass equal to unique key
             robotobject.save() #save update to db
 
