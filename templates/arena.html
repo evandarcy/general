@@ -5,6 +5,7 @@
 {% block content %}
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.js" type="text/javascript"></script>
+
 {% if user.is_authenticated and user_has_robot == True %}
   Hi {{ user.username }}!
   <p><a href="{% url 'logout' %}">logout</a></p>
@@ -26,6 +27,9 @@
 <button type="button" onclick="foo()">Click Me!</button>
 
 <script type"text/javascript" language="javascript">
+  var robots = [];
+  var yourhealth;
+  var opponenthealth;
   var msg = "k";
   var mqtt;
   var reconnectTimeout=2000;
@@ -46,25 +50,27 @@
         password: "{{mqttpass}}",
     timeout: 3,
     onSuccess: onConnect,//callback function
-    onFailure:doFail
+    onFailure: doFail
   };
 
    // mqtt.connect(options);//Connect
  setTimeout(function(){ mqtt.connect(options); }, 20000);
+
   function onConnect(){
   //Once a connection has been made, make a subscription and send a message
   console.log("Connected");
   //mqtt.subscribe("users/robots/{{mqttuser}}");//subscribe to topic
-  mqtt.subscribe("{{mqttuser}}");//subscribe to topic
+  mqtt.subscribe("robots/health");//subscribe to topic
   //var data = JSON.stringify({X: 0, Y: 6});
   message = new Paho.MQTT.Message(msg);
 //  message.destinationName="users/robots/{{mqttuser}}"; //Publish topic = /test
-message.destinationName="{{mqttuser}}"; //Publish topic = /test
+  message.destinationName="{{mqttuser}}"; //Publish topic = /test
   mqtt.send(message); //publish message
   }
 
   function doFail(e){
     console.log(e);
+
   }
 
   // called when the client loses its connection
@@ -76,9 +82,10 @@ message.destinationName="{{mqttuser}}"; //Publish topic = /test
 
   // called when a message arrives
   function onMessageArrived(message) {
-    check(message);
+
     console.log("onMessageArrived:"+message.payloadString);
     document.getElementById('bbb').value = message.payloadString;
+    check(message);
   }
 
   function foo(){
@@ -87,13 +94,43 @@ message.destinationName="{{mqttuser}}"; //Publish topic = /test
   }
 
   function check(message){
-    if(message.payloadString == "hit"){
-      console.log("Hit!");
+    var myObj, i;
+    myObj = JSON.parse(message.payloadString);
+
+    //{"initialise": "robot1", "health": 10}
+    //{"initialise":"robot1"}
+    //NOT {"health: 10"}
+    console.log("******************");
+    //initialises robots in match
+    if(myObj.initialise){
+        if( robots.includes(myObj.initialise) ){
+          console.log("Robot already initialised");
+        }
+        else{
+          console.log("Robot not yet initialised. Adding.");
+          robots[robots.length] = myObj.initialise;
+        }
+        //Sends health of robots
+        if(myObj.health){
+            if(myObj.initialise == "{{mqttuser}}"){
+              yourhealth = myObj.health;
+            }
+            else{
+              opponenthealth = myObj.health;
+            }
+        }
+      console.log("Initialised robots= "+robots.toString());
+      console.log("Your robot is : "+"{{mqttuser}}");
+      console.log("Your health = "+yourhealth);
+      console.log("Your opponent health = "+opponenthealth);
+      console.log("******************")
     }
 
     else{
-      console.log("Miss");
+      console.log("Not recognised");
+      console.log("******************")
     }
+
   }
 </script>
 
