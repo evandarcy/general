@@ -18,10 +18,17 @@ class robot(models.Model):
 
 class mqttbroker(models.Model):
     # Fields
-    mqttbroker= models.CharField(max_length=20,help_text='Enter field documentation')
+    mqttbroker = models.CharField(max_length=20,help_text='Enter field documentation')
     mqtthost = models.CharField(max_length=20, help_text='Enter field documentation')
     mqttport = models.CharField(max_length=20, help_text='Enter field documentation')
     apikey = models.CharField(max_length=40,default="0",help_text='Enter field documentation')
 
     def __str__(self):
         return self.mqttbroker
+
+class battle(models.Model):
+    gameongoing = models.BooleanField(default=True)
+    robotturn = models.CharField(max_length=40,default=" ",help_text='Robot ID of current robot turn')
+    current_turn = models.IntegerField(default=0,help_text='Turns taken so far')
+    def __str__(self):
+        return self.robotturn

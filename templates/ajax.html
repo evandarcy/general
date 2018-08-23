@@ -1,0 +1,35 @@
+
+{% extends 'base.html' %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<!-- <input type = “button” id=”b1″ value=”1″> -->
+
+<div id="target">
+  Click here
+</div>
+<script>
+
+$(document).ready(function(){
+  // $( "#target" ).click(function() {
+  //   alert( "Handler for .click() called." );
+  // });
+$("#target").click(function(){
+  console.log("hitbutton");
+  alert( "Handler for .click() called." );
+  var value = "game";
+  $.ajax({
+    method: "GET",
+    url: "http://127.0.0.1:8000/",
+    data: {"place" : value},
+    dataType: "text",
+    success: function(result){
+      // var data=JSON.parse(result);
+      console.log(result);
+    }
+  });
+});
+});
+</script>
+{% endblock %}

@@ -1,18 +1,59 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from .models import mqttbroker
 from django.utils.crypto import get_random_string
 from django.contrib.auth.models import User
 from .models import robot
+from .models import battle
 import requests
+from django.http import JsonResponse
+import paho.mqtt.publish as publish
 # Create your views here.
+def ajax(request, robot1_id, robot2_id):
+    turn = robot2_id
+    first_robot = robot1_id
+    second_robot = robot2_id
+    # s = request.POST.get('status')
+    # print(s)
+    #Get current_battle object
+    current_battle = battle.objects.get(gameongoing=True)
+    if current_battle.current_turn > 10:
+        data = {
+            'robotturn': turn
+        }
+        print("game over")
+        message = "Game Over"
+        current_battle.current_turn = 0
+        current_battle.save()
+        return redirect('home')
+
+    #Increment turns value by 1 on each request
+    current_battle.current_turn = current_battle.current_turn + 1
+    #Save new value
+    current_battle.save()
+    print(current_battle.current_turn)
+
+    # If the current turn is an even number, It is robot 2 turn
+    if current_battle.current_turn % 2 == 0:
+        turn = robot2_id
+        publish.single("robots/health", '{"robotturn":'+'"'+robot2_id+'"'+'}', hostname="m20.cloudmqtt.com",port=11086, client_id="",auth = {'username':"uzsrcidn", 'password':"V0lGagE"})
+
+    # If the current turn is an odd number, It is robot 1 turn
+    if current_battle.current_turn % 2 != 0:
+        turn = robot1_id
+        publish.single("robots/health", '{"robotturn":'+'"'+robot1_id+'"'+'}', hostname="m20.cloudmqtt.com",port=11086, client_id="",auth = {'username':"uzsrcidn", 'password':"V0lGagE"})
+
+    data = {
+        'robotturn': turn
+    }
+
+    return JsonResponse(data)
 
 def arena(request):
     # Check if the current user's username matches the 'user' field assigned to the robot objects
     # If there is a match, the user is considered to be authorized and may access the arena to control
     # robot. A unique key will be passed to the mqtt broker upon entry and will be changed after logout.
     # If the user is not authorized, they will be redirected back to the home.html page with an error message
-
     # current_user = request.user
     unique_key = get_random_string(length=7)
     # Get current username
