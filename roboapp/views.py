@@ -18,14 +18,15 @@ def ajax(request, robot1_id, robot2_id):
     #Get current_battle object
     current_battle = battle.objects.get(gameongoing=True)
     if current_battle.current_turn > 10:
-        data = {
-            'robotturn': turn
+        status = {
+            'gamestatus': 'gameover'
         }
         print("game over")
         message = "Game Over"
         current_battle.current_turn = 0
         current_battle.save()
-        return redirect('home')
+        publish.single("robots/health", '{"gamestatus":"gameover"}', hostname="m20.cloudmqtt.com",port=11086, client_id="",auth = {'username':"uzsrcidn", 'password':"V0lGagE"})
+        return JsonResponse(status)
 
     #Increment turns value by 1 on each request
     current_battle.current_turn = current_battle.current_turn + 1
