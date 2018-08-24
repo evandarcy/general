@@ -1,4 +1,4 @@
-#!/Users/evandarcy/djangoprojects/venv/bin/python
+#!/Users/adam/git/mqttsecure/venv/bin/python
 
 import sys
 import getopt

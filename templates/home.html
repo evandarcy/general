@@ -4,14 +4,19 @@
 {% block title %}Home{% endblock %}
 
 {% block content %}
+<body>
+<div style="margin-top: 50px;" class="page-header">
 {% if user.is_authenticated %}
-  Hi {{ user.username }}!
+  <h6>Hi {{ user.username }}!</h6>
   <p>{{error}}</p>
   <p><a href="{% url 'logout' %}">logout</a></p>
   <p><a href="{% url 'arena' %}">Go to Arena!</a></p>
 {% else %}
-  <p>You are not logged in</p>
+  <h1>You are not logged in</h1>
   <a href="{% url 'login' %}">login</a>
 
 {% endif %}
+</div>
+
+</body>
 {% endblock %}
