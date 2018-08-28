@@ -43,7 +43,7 @@
 Hi {{ user.username }}!
 
 <p id="timer">Time Remaining in turn: </p>
-
+<p id="control">You pressed: </p>
 <script type"text/javascript" language="javascript">
   var robots = [];
   var yourhealth;
@@ -185,7 +185,6 @@ Hi {{ user.username }}!
             }
 
             if(myObj.gamestatus == "gameover"){
-              console.log("Game over!");
               window.location.replace("http://127.0.0.1:8000");
               //Redirect HERE
             }
@@ -234,17 +233,16 @@ Hi {{ user.username }}!
   function move(){
 
     console.log("Move!");
-    var up = false,
-        right = false,
-        down = false,
-        left = false,
-        x = window.innerWidth/2-130/2,
-        y = window.innerHeight/2-130/2
+    // var up = false,
+    //     right = false,
+    //     down = false,
+    //     left = false,
+    //     x = window.innerWidth/2-130/2,
+    //     y = window.innerHeight/2-130/2
     document.addEventListener('keydown',press)
     function press(e){
       if (e.keyCode === 38 /* up */ || e.keyCode === 87 /* w */ || e.keyCode === 90 /* z */){
         up = true;
-
       }
       if (e.keyCode === 39 /* right */ || e.keyCode === 68 /* d */){
         right = true
@@ -256,6 +254,8 @@ Hi {{ user.username }}!
         left = true
       }
     }
+    // document.addEventListener('keydown',press)
+    // function press(e){
     document.addEventListener('keyup',release)
     function release(e){
       if (e.keyCode === 38 /* up */ || e.keyCode === 87 /* w */ || e.keyCode === 90 /* z */){
@@ -263,13 +263,16 @@ Hi {{ user.username }}!
         console.log("up");
       }
       if (e.keyCode === 39 /* right */ || e.keyCode === 68 /* d */){
-        right = false
+        right = false;
+        console.log("right");
       }
       if (e.keyCode === 40 /* down */ || e.keyCode === 83 /* s */){
-        down = false
+        down = false;
+        console.log("down");
       }
       if (e.keyCode === 37 /* left */ || e.keyCode === 65 /* a */ || e.keyCode === 81 /* q */){
-        left = false
+        left = false;
+        console.log("left");
       }
     }
   }
@@ -286,7 +289,7 @@ Hi {{ user.username }}!
       var min = Math.floor(centisecondsRemaining / 100 / 60);
       var sec = zeroFill(Math.floor(centisecondsRemaining / 100 % 60));
       var cs = zeroFill(centisecondsRemaining % 100);
-      console.log(min + ":" + sec + ":" + cs);
+      //console.log(min + ":" + sec + ":" + cs);
       document.getElementById("timer").innerHTML = "Turn Time Remaining: " + min + ":" + sec + ":" + cs;
       count++;
       if (centisecondsRemaining === 0) {

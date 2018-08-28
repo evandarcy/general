@@ -13,9 +13,11 @@ def ajax(request, robot1_id, robot2_id):
     turn = robot2_id
     first_robot = robot1_id
     second_robot = robot2_id
-    # s = request.POST.get('status')
-    # print(s)
-    #Get current_battle object
+
+    unique_key = get_random_string(length=7)
+    user = User.objects.get(username=request.user.username)
+    userrobot = []
+
     current_battle = battle.objects.get(gameongoing=True)
     if current_battle.current_turn > 10:
         status = {
@@ -26,6 +28,32 @@ def ajax(request, robot1_id, robot2_id):
         current_battle.current_turn = 0
         current_battle.save()
         publish.single("robots/health", '{"gamestatus":"gameover"}', hostname="m20.cloudmqtt.com",port=11086, client_id="",auth = {'username':"uzsrcidn", 'password':"V0lGagE"})
+
+        robot_list = robot.objects.filter()
+        for i in robot_list:
+            #If user linked to robot is same as user attempting access
+            if i.user == user:
+                print("found")
+                userrobot.append(i)
+                robotobject = robot.objects.get(robotname=userrobot[0].robotname)
+                mqttuser = robotobject.mqttuser
+                # Update password of mqtt user in Django database with unique key
+                # Then update password in cloudmqtt
+                mqttpass = unique_key #set mqttpass equal to unique key
+                robotobject.mqttpass = mqttpass
+                robotobject.save() #save update to db
+
+                brokerobject = mqttbroker.objects.get(mqttbroker=robotobject.broker) #Get mqtt broker details for mqttbroker object on port 32285
+                apikey = brokerobject.apikey
+
+                url = "https://api.cloudmqtt.com/api/user/"+str(mqttuser) #cloudmqtt api update password, pass username in url
+                headers= {'Content-Type': 'application/json',}
+                data = '{"password":'+'"'+mqttpass+'"'+'}'
+                r = requests.put(url, headers=headers, data=data, auth=('', apikey))
+                print(r.content)
+                ###################
+                ##################
+
         return JsonResponse(status)
 
     #Increment turns value by 1 on each request
@@ -56,7 +84,7 @@ def arena(request):
     # robot. A unique key will be passed to the mqtt broker upon entry and will be changed after logout.
     # If the user is not authorized, they will be redirected back to the home.html page with an error message
     # current_user = request.user
-    unique_key = get_random_string(length=7)
+        # unique_key = get_random_string(length=7)
     # Get current username
     user = User.objects.get(username=request.user.username)
     userrobot = []
@@ -76,6 +104,7 @@ def arena(request):
             robotobject = robot.objects.get(robotname=userrobot[0].robotname)
             mqttuser = robotobject.mqttuser
             robotname = robotobject.robotname
+            mqttpass = robotobject.mqttpass
 
             # Get data relating to broker
             brokerobject = mqttbroker.objects.get(mqttbroker=robotobject.broker) #Get mqtt broker details for mqttbroker object on port 32285
@@ -83,30 +112,13 @@ def arena(request):
             port = brokerobject.mqttport #Set 'port' equal to the mqttport value of the object
             apikey = brokerobject.apikey
 
-            ###################
-            # Update password of mqtt user in Django database with unique key
-            # Then update password in cloudmqtt
-            mqttpass = unique_key #set mqttpass equal to unique key
-            robotobject.mqttpass = mqttpass
-            robotobject.save() #save update to db
-
-            url = "https://api.cloudmqtt.com/api/user/"+str(mqttuser) #cloudmqtt api update password, pass username in url
-            headers= {'Content-Type': 'application/json',}
-            data = '{"password":'+'"'+mqttpass+'"'+'}'
-            r = requests.put(url, headers=headers, data=data, auth=('', apikey))
-            print(r.content)
-            ###################
-            ##################
-
             context = {'mqttport': port,
                        'mqtthost': host,
                        'mqttuser': mqttuser,
                        'mqttpass': mqttpass,
-                       'user_has_robot': user_has_robot,
-                       'UUID': unique_key,} #Dictionary to map "mqttport" to the corresponding variable
+                       'user_has_robot': user_has_robot} #Dictionary to map "mqttport" to the corresponding variable
 
             # Debug
-            print(data)
             print(robotname)
             print(mqttuser)
             print(mqttpass)
