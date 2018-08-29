@@ -8,6 +8,7 @@ class robot(models.Model):
     mqttuser = models.CharField(max_length=30, blank=True)
     mqttpass = models.CharField(max_length=30, blank=True)
     broker = models.ForeignKey('mqttbroker',on_delete=models.CASCADE,default=1)
+    camera_ip = models.CharField(max_length=80, null=True)
     user = models.OneToOneField(settings.AUTH_USER_MODEL, unique=True, blank=True, null=True, on_delete=models.CASCADE, default=1)
     class Meta:
         verbose_name = 'robot'

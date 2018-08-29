@@ -105,7 +105,7 @@ def arena(request):
             mqttuser = robotobject.mqttuser
             robotname = robotobject.robotname
             mqttpass = robotobject.mqttpass
-
+            camera_ip = robotobject.camera_ip
             # Get data relating to broker
             brokerobject = mqttbroker.objects.get(mqttbroker=robotobject.broker) #Get mqtt broker details for mqttbroker object on port 32285
             host = brokerobject.mqtthost
@@ -116,7 +116,8 @@ def arena(request):
                        'mqtthost': host,
                        'mqttuser': mqttuser,
                        'mqttpass': mqttpass,
-                       'user_has_robot': user_has_robot} #Dictionary to map "mqttport" to the corresponding variable
+                       'user_has_robot': user_has_robot,
+                       'camera_ip':camera_ip} #Dictionary to map "mqttport" to the corresponding variable
 
             # Debug
             print(robotname)
