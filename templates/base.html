@@ -1,4 +1,5 @@
 <!-- templates/base.html -->
+{% load static %}
 <!DOCTYPE html>
 <html>
 <head>
@@ -13,18 +14,65 @@
   <link href="https://fonts.googleapis.com/css?family=Lato|Nunito|Roboto" rel="stylesheet">
   <title>{% block title %}Django Auth Tutorial{% endblock %}</title>
   <style>
+  .meter {
+height: 35px;  /* Can be anything */
+width: 100%;
+position: relative;
+background-image: url({% static 'Progress-Bar.png' %});
+background-size: 100% 100%;
+/* -moz-border-radius: 25px;
+-webkit-border-radius: 25px; */
+/* border-radius: 25px; */
+padding-left: 40px;
+padding-top: 15px;
+padding-bottom: 5px;
+padding-right: 120px;
+margin-bottom: 10px;
+/* -webkit-box-shadow: inset 0 -1px 1px rgba(255,255,255,0.3);
+-moz-box-shadow   : inset 0 -1px 1px rgba(255,255,255,0.3);
+box-shadow        : inset 0 -1px 1px rgba(255,255,255,0.3); */
+}
+
+.meter > span {
+  display: block;
+  height: 60%;
+  background-image: url({% static '1.png' %});
+  position: relative;
+  overflow: hidden;
+}
+.meter > span:after, .animate > span > span {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; bottom: 0; right: 0;
+  z-index: 1;
+  overflow: hidden;
+}
+
+.animate > span:after {
+  display: none;
+}
+
+@-webkit-keyframes move {
+    0% {
+       background-position: 0 0;
+    }
+    100% {
+       background-position: 50px 50px;
+    }
+}
+
         img {
             width: 100%;
             height: auto;
         }
 
         .vignette {
-          position: fixed;
+          position: absolute;
           top: 0;
           left: 0;
           width: 100%;
           height: 100%;
-          box-shadow: 0px 0px 2500px black inset;
+          box-shadow: 0px 0px 5500px black inset;
         }
 
         .centered {
