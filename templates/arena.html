@@ -100,7 +100,7 @@
 
     <div class="fixed-top">
         <div class="container-fluid" style="height:100px; margin-top: 20px;">
-          <div class="health">100%</div>
+          <div class="health" id="yourhealth">100%</div>
         </div>
         <!-- <p id="timer" style="margin-top:200px">Time Remaining in turn: </p>
         <p><a href="{% url 'logout' %}">logout</a></p> -->
@@ -108,7 +108,7 @@
 
     <div class="bottom-info">
       <div class="top-tier">Time Remaining in Turn: </div>
-      <div class="middle-tier">Opponent Health:  </div>
+      <div class="middle-tier" id="opponenthealth">Opponent Health:  </div>
       <div class="third-tier">Time Remaining in Game: </div>
     </div>
 
@@ -147,7 +147,7 @@
   function onConnect(){
   //Once a connection has been made, make a subscription and send a message
   console.log("Connected");
-  mqtt.subscribe("robots/health");//subscribe to topic
+  mqtt.subscribe("health");//subscribe to topic
   message = new Paho.MQTT.Message(msg);
   message.destinationName="{{mqttuser}}"; //Publish topic = /test
   mqtt.send(message); //publish message
@@ -176,7 +176,7 @@
   // called when a message arrives
   function onMessageArrived(message) {
     console.log("onMessageArrived:"+message.payloadString);
-    document.getElementById('bbb').value = message.payloadString;
+    //document.getElementById('health').value = message.payloadString;
     check(message);
   }
 
@@ -233,11 +233,11 @@
                     if(myObj.health){
                         if(myObj.initialise == "{{mqttuser}}"){
                           yourhealth = myObj.health;
-                          document.getElementById("yourhealth").style.width = yourhealth+"%";
+                          document.getElementById("yourhealth").innerHTML = yourhealth+"%";
                         }
                         else{
                           opponenthealth = myObj.health;
-                          document.getElementById("opponenthealth").style.width = opponenthealth+"%";
+                          document.getElementById("opponenthealth").innerHTML = "Opponent Health: "+opponenthealth+"%";
                         }
                     }
                   console.log("Initialised robots= "+robots.toString());
