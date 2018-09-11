@@ -3,8 +3,9 @@ from django.http import HttpResponse
 from .models import mqttbroker
 from django.utils.crypto import get_random_string
 from django.contrib.auth.models import User
-from .models import robot
+from .models import robot, Competition, UserProfile
 from .models import battle
+from .forms import PointsForm
 import requests
 from django.http import JsonResponse
 import paho.mqtt.publish as publish
@@ -78,6 +79,9 @@ def ajax(request, robot1_id, robot2_id):
 
     return JsonResponse(data)
 
+def home(request):
+    return render(request, 'index.html')
+
 def arena(request):
     # Check if the current user's username matches the 'user' field assigned to the robot objects
     # If there is a match, the user is considered to be authorized and may access the arena to control
@@ -133,3 +137,43 @@ def arena(request):
     context = {'error': error,} #Dictionary to map "mqttport" to the corresponding variable
 
     return render(request, 'home.html', context)
+
+def entry(request, entry, id):
+    entry_cost = entry
+    uid = id
+
+    print(entry_cost)
+    print(uid)
+
+    usr_profile = UserProfile.objects.get(user=request.user)
+
+    new_val = usr_profile.balance - entry
+
+    UserProfile.objects.filter(user=request.user).update(balance=new_val)
+
+
+    comp = Competition.objects.get(pk=uid)
+
+    user_val = comp.active_players + 1
+
+    Competition.objects.filter(pk=uid).update(active_players=user_val)
+
+    link = usr_profile
+    link.save()
+
+
+    duel = Competition.objects.get(pk=uid)
+
+    duel.player_link.add(link)
+    duel.save()
+
+    print(usr_profile)
+    return redirect('duels')
+
+def duels(request):
+    usr_profile = UserProfile.objects.get(user=request.user)
+    competitions = Competition.objects.all()
+
+    context = {'usr':usr_profile, 'duels':competitions}
+
+    return render(request, 'duels.html', context)

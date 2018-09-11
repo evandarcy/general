@@ -1,16 +1,136 @@
-{% extends 'base.html' %}
-
+{% extends 'newbase.html' %}
+{% load static %}
 {% block title %}Login{% endblock %}
+{% block custom_styles %}
+<style>
+
+
+@font-face {
+font-family: Gotham;
+src: url({% static 'fonts/gotham.otf'%});
+}
+
+  .custom-color-36d61bcd-7818-d1cf-4691-74a8076f3617 {
+    background-color: #6c5ce7
+  }
+
+  .custom-color-36d61bcd-7818-d1cf-4691-74a8076f3617 .primary-color {
+    color: #FFFFFF
+  }
+
+  .custom-color-36d61bcd-7818-d1cf-4691-74a8076f3617 .secondary-color {
+    color: #D7F9FF
+  }
+
+  .custom-color-36d61bcd-7818-d1cf-4691-74a8076f3617 .accent-bg {
+    background-color: #297AFB
+  }
+
+  .custom-color-36d61bcd-7818-d1cf-4691-74a8076f3617 .secondary-bg {
+    background-color: #2898FB
+  }
+
+  .custom-color-36d61bcd-7818-d1cf-4691-74a8076f3617 .svg-fill {
+    fill: #FFFFFF
+  }
+
+  .custom-color-36d61bcd-7818-d1cf-4691-74a8076f3617 {
+    background-color: #6c5ce7
+  }
+
+  .custom-color-36d61bcd-7818-d1cf-4691-74a8076f3617 .primary-color {
+    color: #FFFFFF
+  }
+
+  .custom-color-36d61bcd-7818-d1cf-4691-74a8076f3617 .secondary-color {
+    color: #D7F9FF
+  }
+
+  .custom-color-36d61bcd-7818-d1cf-4691-74a8076f3617 .accent-bg {
+    background-color: #297AFB
+  }
+
+  .custom-color-36d61bcd-7818-d1cf-4691-74a8076f3617 .secondary-bg {
+    background-color: #2898FB
+  }
+
+  .custom-color-36d61bcd-7818-d1cf-4691-74a8076f3617 .svg-fill {
+    fill: #FFFFFF
+  }
+</style>
+{% endblock %}
 
 {% block content %}
-<body>
-<div class="login-container">
-<h1>Login</h1>
-<form method="post">
+<style>
+.login-styles{
+}
+
+input{
+font-size: 15px;
+outline: 0;
+border: none;
+width: 100%;
+padding: 15px;
+font-family: 'Roboto Mono',monospace;
+
+}
+
+.area{
+  border-radius: 3px;
+  position: relative;
+  z-index: 2;
+  box-shadow: 0 4px 6px rgba(50,50,93,.11), 0 1px 3px rgba(0,0,0,.08);
+  margin: auto;
+  margin-bottom: 20px;
+  max-width: 470px;
+  font-family: 'Roboto Mono';
+  border: 15px solid #fff;
+  -webkit-appearance: textfield;
+  width: 100%;
+  background-color: white;
+  -webkit-rtl-ordering: logical;
+  cursor: text;
+}
+
+.area-button{
+  border-radius: 3px;
+  position: relative;
+  z-index: 2;
+  box-shadow: 0 4px 6px rgba(50,50,93,.11), 0 1px 3px rgba(0,0,0,.08);
+  margin: auto;
+  margin-bottom: 20px;
+  max-width: 470px;
+  font-family: 'Roboto Mono';
+  border: 15px solid #297AFB;
+  -webkit-appearance: textfield;
+  width: 100%;
+  background-color: #297AFB;
+  color: white;
+  -webkit-rtl-ordering: logical;
+  cursor: pointer;
+}
+</style>
+<div class="container mb40">
+  <div class="col-12 text-center">
+    <h1 style="font-family: 'Roboto Mono'; margin-top: 40px; font-size: 2.5em;" class="heading-lrg primary-color">login</h1>
+  </div>
+</container>
+
+<div class="mt40">
+<form class="login-styles" method="post">
   {% csrf_token %}
-  {{ form.as_p }}
-  <button type="submit">Login</button>
+  {% for field in form %}
+
+
+<div class="area">
+{{ field }}
+</div>
+{% endfor %}
+
+  <div class="area-button">
+    <button style="width: 100%; text-align: center; background-color: transparent; border: none; font-family: 'Roboto Mono'; color: white; height: 100%; font-size: 1em;" type="submit">Login</button>
+  </div>
+
 </form>
 </div>
-</body>
 {% endblock %}

@@ -1,0 +1,205 @@
+{% extends 'newbase.html' %}
+{% load static %}
+{% block custom_styles %}
+<style>
+
+  .custom-color-36d61bcd-7818-d1cf-4691-74a8076f3617 {
+    background-color: #6c5ce7
+  }
+
+  .custom-color-36d61bcd-7818-d1cf-4691-74a8076f3617 .primary-color {
+    color: #000;
+  }
+
+  .custom-color-36d61bcd-7818-d1cf-4691-74a8076f3617 .secondary-color {
+        color: #8f8f8f;
+  }
+
+  .custom-color-36d61bcd-7818-d1cf-4691-74a8076f3617 .accent-bg {
+    background-color: #297AFB
+  }
+
+  .custom-color-36d61bcd-7818-d1cf-4691-74a8076f3617 .secondary-bg {
+    background-color: #2898FB
+  }
+
+  .custom-color-36d61bcd-7818-d1cf-4691-74a8076f3617 .svg-fill {
+    fill: #FFFFFF
+  }
+
+  .primary-color{
+    color: #000;
+  }
+
+  .team-card {
+    padding: 30px;
+    border: 1px solid rgba(0,0,0,.1);
+    border-radius: 3px;
+    max-height: 460px;
+}
+
+.pop-up{
+  position: fixed;
+  height: 100%;
+  width: 100%;
+  background:rgba(0,0,0,0.9);
+  z-index: 5;
+  left: 0;
+	right:0;
+	top: 0;
+	bottom:0;
+  overflow: auto;
+  display: none;
+}
+
+.box{
+  width: 300px;
+  background-color: white;
+  z-index: 10;
+  position: relative;
+  margin: auto;
+  margin-top: 150px;
+  border-radius: 3px;
+  padding: 30px;
+  text-align: center;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div style="width: 100%; height: 40px; position: absolute; background-color: #222f3e; margin-bottom: 20px;">
+<p style="color: white; margin-left: 20px; padding-top: 3px;">{{usr.balance}}<img style="padding-top: 10px; margin-left: 4px;" height="22px" width="auto" src="{% static 'images/rp.png' %}"></p>
+<div>
+<div style="margin-top: 60px; margin-bottom: 50px;" class="container text-center">
+  <div class="col-12">
+    <img width="300px" height="auto" src="{% static 'duels.png' %}">
+    <p style="color: #D7F9FF" class="subheading secondary-color mt0">List of open duels that can be joined!</p>
+  </div>
+</div>
+
+<section style="padding-top: 40px;" id="team-2" class="section purple-white" sitemeta="[object Object]" activepage="Games">
+    <div style="max-width: 725px;" class="container-lrg flex wrap text-center">
+    <div class="col-4 flex">
+      <div style="height: 250px !important;" class="team-card flex flex-column center-vertical center-horizontal w100">
+        <div>
+          <b class="bold primary-color">1v1 Battle</b>
+          <p class="paragraph primary-color">100<img style="padding-top: 6px;" height="22px" width="auto" src="{% static 'images/rp.png' %}"></p>
+          <p style="color: green;" class="paragraph primary-color">Active</p>
+          <p style="color: red;" class="paragraph primary-color">Players: 2/2</p>
+          <div style="opacity: .5" class="mt0">
+            <button id="myBtn1" class="button mobile-text-center mt10 mobile-text-center accent-bg button__white">
+              <span style="font-family: Gotham; font-weight: 700;"> Join Game </span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-4 flex">
+      <div style="height: 100% !important;" class="team-card flex flex-column center-vertical center-horizontal w100">
+        <div>
+          <b class="bold primary-color">1v1 Battle</b>
+          <p class="paragraph primary-color">100<img style="padding-top: 6px;" height="22px" width="auto" src="{% static 'images/rp.png' %}"></p>
+          <p style="color: red;" class="paragraph primary-color">16:00 GMT</p>
+          <p style="color: green;" class="paragraph primary-color">Players: 1/2</p>
+          <div class="mt0">
+            <button id="myBtn2" class="button mobile-text-center mt10 mobile-text-center accent-bg button__white">
+              <span style="font-family: Gotham; font-weight: 700;"> Join Game </span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-4 flex">
+      <div style="height: 250px !important;" class="team-card flex flex-column center-vertical center-horizontal w100">
+        <div>
+          <b class="bold primary-color">1v1 Battle</b>
+          <p class="paragraph primary-color">100<img style="padding-top: 6px;" height="22px" width="auto" src="{% static 'images/rp.png' %}"></p>
+          <p style="color: red;" class="paragraph primary-color">16:00 GMT</p>
+          <p style="color: green;" class="paragraph primary-color">Players: 0/2</p>
+          <div class="mt0">
+            <button id="myBtn3" class="button mobile-text-center mt10 mobile-text-center accent-bg button__white">
+              <span style="font-family: Gotham; font-weight: 700;"> Join Game </span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% for d in duels %}
+    <div class="col-4 flex">
+      <div style="height: 100% !important; margin-top: 50px;" class="team-card flex flex-column center-vertical center-horizontal w100">
+        <div>
+          <b class="bold primary-color">{{d.name}}</b>
+          <p class="paragraph primary-color">{{d.entry_cost}}<img style="padding-top: 6px;" height="22px" width="auto" src="{% static 'images/rp.png' %}"></p>
+          <p style="color: red;" class="paragraph primary-color">{{d.datetime.time}} GMT</p>
+          <p style="color: green;" class="paragraph primary-color">Players: 0/2</p>
+          <div class="mt0">
+            <a href="{% url 'entry' d.entry_cost d.id %}">
+              <button class="button mobile-text-center mt10 mobile-text-center accent-bg button__white">
+                <span style="font-family: Gotham; font-weight: 700;"> Join Game </span>
+              </button>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {% endfor %}
+  </div>
+</section>
+
+
+<div id="myModal" class="pop-up">
+  <div class="box">
+      <b style="text-align: center;" class="bold primary-color">Are you sure you want to join this game?</b>
+      <p class="paragraph primary-color">Cost: 100<img style="padding-top: 6px;" height="22px" width="auto" src="{% static 'images/rp.png' %}"></p>
+  <div>
+  <div class="mt0">
+    <a href="https://discord.gg/gTR6rVA" target="_blank" class="button mobile-text-center mt10 mobile-text-center accent-bg button__white">
+      <span style="font-family: Gotham; font-weight: 700;">Sure am!</span>
+    </a>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block custom_script %}
+<script>
+// Get the modal
+var modal = document.getElementById('myModal');
+
+// Get the button that opens the modal
+var btn1 = document.getElementById("myBtn1");
+var btn2 = document.getElementById("myBtn2");
+var btn3 = document.getElementById("myBtn3");
+//
+// // Get the <span> element that closes the modal
+// var span = document.getElementsByClassName("close")[0];
+
+// When the user clicks the button, open the modal
+btn1.onclick = function() {
+    modal.style.display = "block";
+}
+
+btn2.onclick = function() {
+    modal.style.display = "block";
+}
+
+btn3.onclick = function() {
+    modal.style.display = "block";
+}
+
+
+// // When the user clicks on <span> (x), close the modal
+// span.onclick = function() {
+//     modal.style.display = "none";
+// }
+
+// When the user clicks anywhere outside of the modal, close it
+window.onclick = function(event) {
+    if (event.target == modal) {
+        modal.style.display = "none";
+    }
+}
+</script>
+{% endblock %}
