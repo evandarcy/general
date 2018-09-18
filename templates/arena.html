@@ -209,25 +209,27 @@
                       robots[robots.length] = myObj.initialise;
                     }
 
-                    if(robots.length == 2 && "{{mqttuser}}" == robots[0]){
+                    if(robots.length == 2){
                       console.log("Two robots already initialised.");
-                      alert("Two players initialised. Beginning game.");
-                        $.ajax({
-                          method: "POST",
-                          url: "http://127.0.0.1:8000/roboapp/ajax/"+robots[0]+"/"+robots[1],
-                          data: {csrfmiddlewaretoken: "{{ csrf_token }}",
-                                "status" : "begingame",
-                                "robotturn": robots[0]
-                                },
-                          dataType: "json",
-                          success: function(data){
-                            if (data.robotturn) {
-                              console.log(data.robotturn);
-                              robotturn = true;
-                              //play();
-                            }
-                          }
-                        });
+                      move();
+                      // alert("Two players initialised. Beginning game.");
+                      //   $.ajax({
+                      //     method: "POST",
+                      //     url: "http://127.0.0.1:8000/ajax/"+robots[0]+"/"+robots[1],
+                      //     data: {csrfmiddlewaretoken: "{{ csrf_token }}",
+                      //           "status" : "begingame"
+                      //           // "robotturn": robots[0]
+                      //           },
+                      //     dataType: "json",
+                      //     success: function(data){
+                      //       console.log("Game On!")
+                      //       // if (data.robotturn) {
+                      //       //   console.log(data.robotturn);
+                      //       //   robotturn = true;
+                      //       //   //play();
+                      //       // }
+                      //     }
+                      //   });
                     }
                     //Sends health of robots
                     if(myObj.health){
@@ -247,10 +249,10 @@
                   console.log("******************")
             }
 
-            if(myObj.robotturn == "{{mqttuser}}"){
-              robotturn = myObj.robotturn;
-              play();
-            }
+            // if(myObj.robotturn == "{{mqttuser}}"){
+            //   robotturn = myObj.robotturn;
+            //   play();
+            // }
 
             if(myObj.gamestatus == "gameover"){
               window.location.replace("http://127.0.0.1:8000");
@@ -266,40 +268,37 @@
     }
   }
 
-  function game(){
-        //Call to django
-        if(robotturn == "{{mqttuser}}"){
-          $.ajax({
-            method: "POST",
-            url: "http://127.0.0.1:8000/roboapp/ajax/"+robots[0]+"/"+robots[1],
-            data: {csrfmiddlewaretoken: "{{ csrf_token }}",
-                  "status" : "begingame",
-                  "robotturn": robots[0]
-                  },
-            dataType: "json",
-            success: function(data){
-              if (data.status) {
-                console.log(data.status);
-                play();
-              }
-            }
-          });
-        }
+  // function game(){
+  //       //Call to django
+  //       if(robotturn == "{{mqttuser}}"){
+  //         $.ajax({
+  //           method: "POST",
+  //           url: "http://127.0.0.1:8000/roboapp/ajax/"+robots[0]+"/"+robots[1],
+  //           data: {csrfmiddlewaretoken: "{{ csrf_token }}",
+  //                 "status" : "begingame",
+  //                 "robotturn": robots[0]
+  //                 },
+  //           dataType: "json",
+  //           success: function(data){
+  //             if (data.status) {
+  //               console.log(data.status);
+  //               play();
+  //             }
+  //           }
+  //         });
+  //       }
+  //
+  //       else{
+  //         alert("Click here to begin your turn.")
+  //       }
+  // }
 
-        else{
-          alert("Click here to begin your turn.")
-        }
-  }
-
-  function play(){
-    alert("Click to begin your turn!");
-    move();
-    starttimer(1000);
-
-  }
+  // function play(){
+  //   alert("Click to begin your game!");
+  //   move();
+  // }
 
   function move(){
-
     console.log("Move!");
     // var up = false,
     //     right = false,
@@ -358,7 +357,7 @@
       var sec = zeroFill(Math.floor(centisecondsRemaining / 100 % 60));
       var cs = zeroFill(centisecondsRemaining % 100);
       //console.log(min + ":" + sec + ":" + cs);
-      document.getElementById("timer").innerHTML = "Turn Time Remaining: " + min + ":" + sec + ":" + cs;
+      // document.getElementById("timer").innerHTML = "Turn Time Remaining: " + min + ":" + sec + ":" + cs;
       count++;
       if (centisecondsRemaining === 0) {
         clearInterval(interval);
